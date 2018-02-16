@@ -1,6 +1,6 @@
 POINTS_PER_FOOD = 1
-SQUARE_SIZE = 18
-INTERSQUARE_SPACE = 2
+SQUARE_SIZE = 17
+INTERSQUARE_SPACE = 3
 
 
 class Snake:
@@ -54,6 +54,9 @@ class Snake:
 
         self.body.insert(0, positions)
         self.body.pop()
+
+    def get_location(self):
+        return list(self.body[0])
 
     def eat(self):
         tail_location = self.body[-1]

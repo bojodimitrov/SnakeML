@@ -3,6 +3,7 @@ class Graphics:
         self.canvas = canvas
         self.canvas.focus_set()
         self.canvas.pack()
+        self.canvas.configure(background="black")
 
     def draw(self, coordinates, square_size, color):
         for piece in coordinates:
@@ -20,4 +21,5 @@ class Graphics:
         self.canvas.delete('all')
 
     def write(self, text, location):
-        self.canvas.create_text(location[0], location[1], text=text)
+        self.canvas.create_text(
+            location[0], location[1], text=text, fill="white")

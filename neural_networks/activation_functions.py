@@ -3,11 +3,13 @@ Activation function
 """
 import math
 
+
 def identity(value):
     """
     Identity function
     """
     return 0.3 * value
+
 
 def step_function(value):
     """
@@ -17,11 +19,13 @@ def step_function(value):
         return 1
     return 0
 
+
 def sigmoid(value):
     """
     Implementation of sigmoid function
     """
     return 1 / (1 + math.exp(-value))
+
 
 def sigmoid_derivative(value):
     """
@@ -29,11 +33,13 @@ def sigmoid_derivative(value):
     """
     return value * (1 - value)
 
+
 def hyperbolic_tangent(value):
     """
     Return the hyperbolic tangent of x
     """
     return math.tanh(value)
+
 
 def hyperbolic_tangent_derivative(value):
     """
@@ -41,11 +47,13 @@ def hyperbolic_tangent_derivative(value):
     """
     return 1.0 - math.tanh(value) ** 2
 
+
 def ReLU(value):
     """
     Rectified linear unit
     """
     return 0.1 * value * (value > 0)
+
 
 def PReLU(value):
     """

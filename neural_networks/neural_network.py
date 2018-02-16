@@ -3,7 +3,7 @@ Implementation of neural network with one hidden layer
 """
 import random
 import neural_networks.units as units
-import activation_functions
+import neural_networks.activation_functions as activation_functions
 
 
 class NeuralNetwork:
@@ -37,7 +37,12 @@ class NeuralNetwork:
             self.layers[-2]['bias'].append(random.uniform(-1, 1))
 
     def __call__(self, inputs):
-        return self._feed_forward(inputs, activation_functions.sigmoid)
+        return self.predict(inputs)
+
+    def predict(self, inputs):
+        result = self._feed_forward(inputs, activation_functions.sigmoid)
+        hypothesis = result.index(max(result))
+        return hypothesis
 
     def _feed_forward(self, inputs, activation):
         """
