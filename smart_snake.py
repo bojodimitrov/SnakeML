@@ -1,6 +1,9 @@
 from snake import Snake
 from sight import Sight
 from neural_networks import NeuralNetwork
+from mutation_operations import *
+
+MUTATION_PROBABILITY = 0.01
 
 
 class SmartSnake(Snake):
@@ -23,3 +26,16 @@ class SmartSnake(Snake):
         if result == 3:
             self.update_direction('l')
         super(SmartSnake, self).move(walls, food_location)
+
+    def fit(self):
+        return self.score
+
+    def mutate(self):
+        self.brain.mutate(MUTATION_PROBABILITY, [
+                          replace_weight, scale, shift, swap_sign])
+
+    def plug(self, brain):
+        self.brain = NeuralNetwork(brain, False)
+
+    def get_brain(self):
+        return self.brain

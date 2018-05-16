@@ -11,7 +11,38 @@ class NeuralNetwork:
     Represents neural network with just one hidden layer
     """
 
-    def __init__(self, layer_pattern):
+    def __init__(self, brain, layer_is_pattern=True):
+        if(layer_is_pattern):
+            self.random_neural_network(brain)
+        else:
+            self.plug_brain(brain)
+
+    def plug_brain(self, neural_network):
+        self.layers = []
+        self.depth = neural_network.get_layer_num()
+
+        self.layers.append({'bias': [], 'neurons': []})
+        for _ in neural_network.get_layer(0):
+            self.layers[0]['neurons'].append(units.InputNeuron(0))
+
+        for i in range(1, self.depth-1):
+            self.layers.append({'bias': [], 'neurons': []})
+            for _ in neural_network.get_layer(i):
+                rand_weights = []
+                for _ in neural_network.get_layer(i-1):
+                    rand_weights.append(random.uniform(-1, 1))
+                self.layers[-1]['neurons'].append(units.Neuron(rand_weights))
+                self.layers[-2]['bias'].append(random.uniform(-1, 1))
+
+        self.layers.append({'neurons': []})
+        for i in neural_network.get_layer(-1):
+            rand_weights = []
+            for _ in neural_network.get_layer(-2):
+                rand_weights.append(random.uniform(-1, 1))
+            self.layers[-1]['neurons'].append(units.Neuron(rand_weights))
+            self.layers[-2]['bias'].append(random.uniform(-1, 1))
+
+    def random_neural_network(self, layer_pattern):
         self.layers = []
         self.depth = len(layer_pattern)
 
@@ -59,6 +90,9 @@ class NeuralNetwork:
                     activation, self.layers[i-1]['bias'][j])
 
         return [neuron.get_value() for neuron in self.layers[-1]['neurons']]
+
+    def get_layer_num(self):
+        return len(self.layers)
 
     def get_neuron(self, layer, index):
         """

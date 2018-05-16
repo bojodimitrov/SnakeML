@@ -1,5 +1,5 @@
 POINTS_PER_FOOD = 1
-SQUARE_SIZE = 17
+SQUARE_SIZE = 12
 INTERSQUARE_SPACE = 3
 
 
@@ -8,7 +8,7 @@ class Snake:
         self.body = []
         self.lenght = lenght
         self.score = 0
-        self.plugins = []
+        self.time_alive = 0
         self.direction = 'r'
         self.die = None
 
@@ -47,13 +47,14 @@ class Snake:
         self.eaten = handler
 
     def update(self, positions, walls, food_location):
-        if self.body_hit(positions) or self.wall_hit(positions, walls):
+        if self.body_hit(positions) or self.wall_hit(positions, walls) or self.time_alive == 500:
             self.die()
         if positions[0] == food_location[0] and positions[1] == food_location[1]:
             self.eat()
 
         self.body.insert(0, positions)
         self.body.pop()
+        self.time_alive += 1
 
     def get_location(self):
         return list(self.body[0])
@@ -90,3 +91,16 @@ class Snake:
         for body_part in self.body:
             if new_position[0] == body_part[0] and new_position[1] == body_part[1]:
                 return True
+
+    def reset_location(self, location, lenght):
+        self.body = []
+        self.lenght = lenght
+        self.score = 0
+        self.time_alive = 0
+        self.direction = 'r'
+
+        cur_x = location[0]
+        cur_y = location[1]
+        for _ in range(self.lenght):
+            self.body.append([cur_x, cur_y])
+            cur_x -= SQUARE_SIZE + INTERSQUARE_SPACE

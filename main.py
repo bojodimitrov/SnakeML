@@ -2,20 +2,23 @@ from graphics import Graphics
 from snake import Snake
 from smart_snake import SmartSnake
 from food import Food
+from genetic_algorithm import Evolver
 import tkinter as tk
 import events
 
 DIMENSIONS = [[0, 600], [0, 600]]
 WINDOW_SIZE = [620, 620]
-MIL_SEC_PER_FRAME = 64
+MIL_SEC_PER_FRAME = 60
 DEFAULT_SNAKE_LENGHT = 40
+POPULATION_COUNT = 10
 
 
 class Master:
-    def __init__(self):
+    def __init__(self, snake_picker=None):
         self.master = tk.Tk()
         canvas = tk.Canvas(
             self.master, width=WINDOW_SIZE[0], height=WINDOW_SIZE[1])
+        self.pick_snake = snake_picker
         self.init_snake()
         self.free_space = []
         self.calculate_free_space()
@@ -44,7 +47,11 @@ class Master:
                     self.free_space.append([i, j])
 
     def init_snake(self):
-        self.snake = SmartSnake([100, 100], DEFAULT_SNAKE_LENGHT, [8, 6, 4])
+        if self.pick_snake is None:
+            self.snake = Snake([105, 105], 10)
+        else:
+            self.snake = self.pick_snake()
+            self.handle_feed()
         self.snake.bind_death_event(self.init_snake)
         self.snake.bind_eat_event(self.handle_feed)
 
@@ -70,5 +77,17 @@ class Master:
         self.graphics.write(str(self.snake.get_score()), [20, 20])
 
 
-game = Master()
-game.start()
+class Environment:
+    def __init__(self):
+        self.evolver = Evolver(POPULATION_COUNT)
+        self.simulator = Master()
+
+    def start(self):
+        self.simulator.start()
+
+    def get_next_snake(self):
+        return self.evolver.get_next_snake()
+
+
+world = Environment()
+world.start()

@@ -6,7 +6,7 @@ class Sight:
     The vector octets follow next pattern:
         \(x7) |(x0) /(x1)
         --(x6)     --(x2)
-        /(x5) |(x4) \(x3) 
+        /(x5) |(x4) \(x3)
         [x0, x1, x2, x3, x4, x5, x6, x7]
     """
 
@@ -14,6 +14,7 @@ class Sight:
         # horizontal
         sight = self.get_wall_distance(location, walls, grid_size)
         sight = self.get_body_distance(location, walls, body, grid_size, sight)
+        sight.extend(self.get_food_distance(location, food, grid_size))
         return sight
 
     def get_wall_distance(self, location, walls, grid_size):
@@ -95,4 +96,26 @@ class Sight:
                 dist_diagonal_up_left]
 
     def get_food_distance(self, location, food_location, grid_size):
-        a = 5
+        food_sight = [0] * 8
+        food_vector = [(food_location[0] - location[0]) / grid_size,
+                       (food_location[1] - location[1]) / grid_size]
+        if food_vector[0] == 0 and food_vector[1] > 0:
+            food_sight[0] = food_vector[1]
+        if food_vector[0] == 0 and food_vector[1] < 0:
+            food_sight[4] = food_vector[1]
+        if food_vector[1] == 0 and food_vector[0] > 0:
+            food_sight[2] = food_vector[0]
+        if food_vector[1] == 0 and food_vector[0] < 0:
+            food_sight[6] = food_vector[0]
+        if abs(food_vector[0]) == abs(food_vector[1]):
+            dist = abs(food_vector[0]) + abs(food_vector[1])
+            if food_vector[0] > 0 and food_vector[1] > 0:
+                food_sight[1] = dist
+            if food_vector[0] > 0 and food_vector[1] < 0:
+                food_sight[3] = dist
+            if food_vector[0] < 0 and food_vector[1] < 0:
+                food_sight[5] = dist
+            if food_vector[0] < 0 and food_vector[1] > 0:
+                food_sight[7] = dist
+
+        return food_sight
