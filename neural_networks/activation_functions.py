@@ -4,7 +4,7 @@ Activation function
 import math
 
 
-def identity(value):
+def linear(value):
     """
     Identity function
     """
@@ -24,7 +24,10 @@ def sigmoid(value):
     """
     Implementation of sigmoid function
     """
-    return 1 / (1 + math.exp(-value))
+    if value < 0:
+        return 1 - 1/(1 + math.exp(value))
+    else:
+        return 1/(1 + math.exp(-value))
 
 
 def sigmoid_derivative(value):
@@ -52,7 +55,7 @@ def ReLU(value):
     """
     Rectified linear unit
     """
-    return 0.1 * value * (value > 0)
+    return value * (value > 0)
 
 
 def PReLU(value):
@@ -60,6 +63,12 @@ def PReLU(value):
     Parametric rectifier
     """
     if value < 0:
-        return 0.18 * value
+        return 0.2 * value
     else:
-        return 0.17 * value
+        return value
+
+
+def softmax(value, vector):
+    """Compute softmax values for each sets of scores in x."""
+    e_x = math.exp(value)
+    return e_x / sum(map(lambda x: math.exp(x), vector))

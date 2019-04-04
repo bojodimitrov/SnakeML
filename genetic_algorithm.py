@@ -1,7 +1,5 @@
 from population import Population
-
-KILL_COUNT = 4
-CROSSBREED_COUNT = 4
+from world_configuration import KILL_COUNT, CROSSBREED_COUNT
 
 
 class Evolver:
@@ -14,6 +12,7 @@ class Evolver:
         self.population.kill(KILL_COUNT)
         self.population.crossbreed(CROSSBREED_COUNT)
         self.population.mutate()
+        self.population.utilities()
         self.population.reset()
         self.epoch += 1
         print("Generation: " + str(self.epoch))
@@ -23,3 +22,6 @@ class Evolver:
             self.evolve()
 
         return self.population.get_next_snake()
+
+    def get_current_snake(self):
+        return self.population.get_current_snake()

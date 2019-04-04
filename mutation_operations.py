@@ -19,7 +19,7 @@ def shift(weight):
     """
     Adds random number between -0.8, 0.8
     """
-    return weight + random.uniform(-0.8, 0.8)
+    return weight + random.uniform(-0.5, 0.5)
 
 
 def swap_sign(weight):

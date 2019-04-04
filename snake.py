@@ -1,16 +1,16 @@
-POINTS_PER_FOOD = 1
-SQUARE_SIZE = 12
-INTERSQUARE_SPACE = 3
+from world_configuration import DIE_OF_HUNGER, POINTS_PER_FOOD, SQUARE_SIZE, INTERSQUARE_SPACE
 
 
 class Snake:
     def __init__(self, location, lenght):
         self.body = []
+        self.block_input = False
         self.lenght = lenght
         self.score = 0
         self.time_alive = 0
         self.direction = 'r'
         self.die = None
+        self.predeath_event = None
 
         cur_x = location[0]
         cur_y = location[1]
@@ -22,11 +22,14 @@ class Snake:
         self.score += POINTS_PER_FOOD
 
     def update_direction(self, direction):
+        if self.block_input:
+            return
         if(self.direction == 'r' and direction == 'l' or direction == 'r' and self.direction == 'l'):
             return
         if(self.direction == 'u' and direction == 'd' or direction == 'u' and self.direction == 'd'):
             return
         self.direction = direction
+        self.block_input = True
 
     def get_size(self):
         return SQUARE_SIZE
@@ -43,14 +46,18 @@ class Snake:
     def bind_death_event(self, handler):
         self.die = handler
 
+    def bind_predeath_event(self, handler):
+        self.predeath_event = handler
+
     def bind_eat_event(self, handler):
         self.eaten = handler
 
-    def update(self, positions, walls, food_location):
-        if self.body_hit(positions) or self.wall_hit(positions, walls) or self.time_alive == 500:
+    def update(self, positions, walls, food_locations):
+        if self.body_hit(positions) or self.wall_hit(positions, walls) or self.time_alive == DIE_OF_HUNGER:
+            self.execute_predeath_event()
             self.die()
-        if positions[0] == food_location[0] and positions[1] == food_location[1]:
-            self.eat()
+        if positions in food_locations:
+            self.eat(positions)
 
         self.body.insert(0, positions)
         self.body.pop()
@@ -59,28 +66,37 @@ class Snake:
     def get_location(self):
         return list(self.body[0])
 
-    def eat(self):
+    def execute_predeath_event(self):
+        if self.predeath_event is not None:
+            self.predeath_event()
+
+    def eat(self, food_location):
         tail_location = self.body[-1]
         tail_direction = [self.body[-2][0] - tail_location[0],
                           self.body[-2][1] - tail_location[1]]
         self.body.append([tail_location[0] - tail_direction[0],
                           tail_location[1] - tail_direction[1]])
         self.update_score()
-        self.eaten()
+        self.time_alive = 0
+        self.eaten(food_location)
 
-    def move(self, walls, food_location):
-        snake_location = list(self.body[0])
+    def move(self, walls, food_locations):
+        snake_location = self.calculate_move(self.direction)
+        self.block_input = False
 
-        if(self.direction == 'r'):
+        self.update(snake_location, walls, food_locations)
+
+    def calculate_move(self, direction):
+        snake_location = self.get_location()
+        if(direction == 'r'):
             snake_location[0] += SQUARE_SIZE + INTERSQUARE_SPACE
-        if(self.direction == 'u'):
+        if(direction == 'u'):
             snake_location[1] -= SQUARE_SIZE + INTERSQUARE_SPACE
-        if(self.direction == 'l'):
+        if(direction == 'l'):
             snake_location[0] -= SQUARE_SIZE + INTERSQUARE_SPACE
-        if(self.direction == 'd'):
+        if(direction == 'd'):
             snake_location[1] += SQUARE_SIZE + INTERSQUARE_SPACE
-
-        self.update(snake_location, walls, food_location)
+        return snake_location
 
     def wall_hit(self, location, walls):
 
